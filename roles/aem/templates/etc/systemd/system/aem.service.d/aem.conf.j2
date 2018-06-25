@@ -1,4 +1,13 @@
 [Service]
 Environment="CQ_PORT={{ aem_port }}"
 Environment="CQ_RUNMODE={{ aem_runmode }}"
-{# Environment="CQ_JVM_OPTS=-server -Djava.awt.headless=true -XX:+UseParallelOldGC -Djava.io.tmpdir=/tmp/aem/ -Xmx12g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath={{ aem_root_directory }}/dumps/ -XX:+PrintGCDateStamps -verbose:gc -XX:+PrintGCDetails -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=3 -XX:GCLogFileSize=20M -Xloggc:{{ aem_root_directory }}/crx-quickstart/logs/gc.log" #}
+Environment="CQ_JVM_OPTS=-server -Xmx1024m -XX:MaxPermSize=256M -Djava.awt.headless=true"
+
+{# Environment="CQ_HOST="
+Environment="CQ_JARFILE=''"
+Environment="CQ_FILE_SIZE_LIMIT=8192"
+Environment="CQ_USE_JAAS='true'""
+Environment="CQ_JAAS_CONFIG='etc/jaas.config'"
+Environment="CQ_MONGO_HOST=127.0.0.1"
+Environment="CQ_MONGO_PORT=27017"
+Environment="CQ_MONGO_DB=aem6" #}

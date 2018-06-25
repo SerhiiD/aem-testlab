@@ -2,3 +2,4 @@
 .vagrant/
 *.jar
 aem_private_information.yml
+aem_sensitive_information.yml
