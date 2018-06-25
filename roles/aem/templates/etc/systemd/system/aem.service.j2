@@ -1,0 +1,16 @@
+[Unit]
+Description={{ aem_license_product_name }} {{ aem_license_product_version }}
+After=multi-user.target
+Requires=network.target
+ 
+[Service]
+Type=simple
+ExecStart={{ aem_root_directory }}/crx-quickstart/bin/start
+ExecStop={{ aem_root_directory }}/crx-quickstart/bin/stop
+ExecReload={{ aem_root_directory }}/crx-quickstart/bin/stop && {{ aem_root_directory }}/crx-quickstart/bin/start
+RemainAfterExit=yes
+User={{ aem_user }}
+SyslogIdentifier=aem
+ 
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,12 @@
+---
+common_packages:
+  - vim
+  - sudo
+  - telnet
+  - nmap
+  - mlocate
+  - java-1.8.0-openjdk
+
+aem_root_directory: /opt/aem6
+aem_user: root
+

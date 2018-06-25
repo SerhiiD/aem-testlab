@@ -1,0 +1,9 @@
+---
+- name: AEM role
+  hosts: all
+  become: true
+  vars_files:
+    - aem_private_information.yml
+  roles:
+    - common
+    - aem

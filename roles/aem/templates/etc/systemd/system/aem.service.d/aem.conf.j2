@@ -1,0 +1,4 @@
+[Service]
+Environment="CQ_PORT={{ aem_port }}"
+Environment="CQ_RUNMODE={{ aem_runmode }}"
+{# Environment="CQ_JVM_OPTS=-server -Djava.awt.headless=true -XX:+UseParallelOldGC -Djava.io.tmpdir=/tmp/aem/ -Xmx12g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath={{ aem_root_directory }}/dumps/ -XX:+PrintGCDateStamps -verbose:gc -XX:+PrintGCDetails -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=3 -XX:GCLogFileSize=20M -Xloggc:{{ aem_root_directory }}/crx-quickstart/logs/gc.log" #}

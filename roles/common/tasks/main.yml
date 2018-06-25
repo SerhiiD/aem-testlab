@@ -1,0 +1,52 @@
+---
+# tasks file for common
+
+- name: Update packages
+  yum:
+    name: '*'
+    state: latest
+    update_cache: yes
+  when:
+    - ansible_distribution == "CentOS"
+  tags:
+    - common
+    - packages
+    - common-packages
+
+- name: Install packages
+  yum:
+    name: "{{ common_packages }}"
+    state: latest
+    update_cache: yes
+  when:
+    - ansible_distribution == "CentOS"
+  tags:
+    - common
+    - packages
+    - common-packages
+
+- name: Put SELinux in permissive mode, logging actions that would be blocked.
+  selinux:
+    policy: targeted
+    state: permissive
+  tags:
+    - common
+    - configuration
+    - common-configuration
+
+- name: Set environment variables
+  template:
+    src: environment_variables.sh.j2
+    dest: /etc/profile.d/environment_variables.sh
+  tags:
+    - common
+    - environment
+    - common-environment
+
+- name: Set timezone to Europe/Kiev
+  timezone:
+    name: "{{ common_timezone }}"
+  tags:
+    - common
+    - time
+    - common-time

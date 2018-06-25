@@ -1,0 +1,4 @@
+*.retry
+.vagrant/
+*.jar
+aem_private_information.yml

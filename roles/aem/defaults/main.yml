@@ -1,0 +1,14 @@
+---
+# defaults file for aem
+aem_root_directory: /opt/aem6/
+aem_user: aem
+
+aem_license_product_name: ""
+aem_license_customer_name: ""
+aem_license_product_version: ""
+aem_license_downloadID: ""
+
+aem_jar_file_location: ""
+
+aem_port: 4502
+aem_runmode: author

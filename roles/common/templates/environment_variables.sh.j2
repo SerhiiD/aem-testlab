@@ -1,0 +1,5 @@
+{% if common_environment_variables is defined and common_environment_variables != None %}
+{% for key, value in common_environment_variables.items() %}
+export {{ key }}="{{ value }}"
+{% endfor %}
+{% endif %}

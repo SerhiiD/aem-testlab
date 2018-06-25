@@ -1,0 +1,10 @@
+---
+# handlers file for aem
+- name: restart aem
+  service:
+    name: aem.service
+    state: restarted
+
+- name: reread systemd configs
+  systemd:
+    daemon_reload: yes
