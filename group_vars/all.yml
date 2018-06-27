@@ -8,4 +8,7 @@ common_packages:
   - java-1.8.0-openjdk
 
 aem_root_directory: /opt/aem6
-aem_user: root
+aem_service_user: root
+
+aem_admin_user: admin
+aem_admin_password: admin

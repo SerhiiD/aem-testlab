@@ -3,8 +3,14 @@
 
 ENV["LC_ALL"] = "en_US.UTF-8"
 
+numberOfPublish = 2
+hostPublishPort = 4503
+
 ansible_groups = {}
 ansible_host_vars = {}
+
+ansible_groups["publish_group"] = ["publish-[1:#{numberOfPublish}]"]
+
 
 Vagrant.configure("2") do |config|
 
@@ -25,21 +31,22 @@ Vagrant.configure("2") do |config|
         ansible_groups["author_group"] = ["author"]    
     end
 
-    config.vm.define "publish" do |publish|
-        publish.vm.box = "centos/7"
-        publish.vm.network "forwarded_port", guest: 4503, host: 4503, host_ip: "127.0.0.1"
-        publish.vm.network "private_network", type: "dhcp"
+    (1..numberOfPublish).each do |id|
+        config.vm.define "publish-#{id}" do |publish|
+            publish.vm.box = "centos/7"
+            publish.vm.network "forwarded_port", guest: 4503, host: "#{hostPublishPort += 1}", host_ip: "127.0.0.1"
+            publish.vm.network "private_network", type: "dhcp"
 
-        publish.vm.provider "virtualbox" do |vb|
-            vb.name = "publish"
-            vb.memory = 2048
-            vb.cpus = 2
+            publish.vm.provider "virtualbox" do |vb|
+                vb.name = "publish-#{id}"
+                vb.memory = 2048
+                vb.cpus = 2
+            end
+            publish.vm.hostname = "publish"
+
+            # ansible_host_vars["publish"] = {"aem_runmode" => "publish",
+            #                                 "aem_port" => "4503"}
         end
-        publish.vm.hostname = "publish"
-
-        # ansible_host_vars["publish"] = {"aem_runmode" => "publish",
-        #                                 "aem_port" => "4503"}
-        ansible_groups["publish_group"] = ["publish"]    
     end
 
     config.vm.define "workaround" do |workaround|

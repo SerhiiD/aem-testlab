@@ -1,7 +1,10 @@
 ---
 # defaults file for aem
 aem_root_directory: /opt/aem6/
-aem_user: aem
+aem_service_user: aem
+
+aem_admin_user: admin
+aem_admin_password: admin
 
 aem_license_product_name: ""
 aem_license_customer_name: ""

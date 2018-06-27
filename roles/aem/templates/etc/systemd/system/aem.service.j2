@@ -9,7 +9,7 @@ ExecStart={{ aem_root_directory }}/crx-quickstart/bin/start
 ExecStop={{ aem_root_directory }}/crx-quickstart/bin/stop
 ExecReload={{ aem_root_directory }}/crx-quickstart/bin/stop && {{ aem_root_directory }}/crx-quickstart/bin/start
 RemainAfterExit=yes
-User={{ aem_user }}
+User={{ aem_service_user }}
 SyslogIdentifier=aem
  
 [Install]
