@@ -9,4 +9,3 @@ common_packages:
 
 aem_root_directory: /opt/aem6
 aem_user: root
-
