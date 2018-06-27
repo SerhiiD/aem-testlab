@@ -14,7 +14,7 @@
 - name: Copy the AEM jar file to the remote host
   copy:
     src: "{{ aem_jar_file_location }}"
-    dest: "{{ aem_root_directory }}/aem.jar"
+    dest: "{{ aem_root_directory }}/{{ aem_jar_file_location.split('/')[-1] }}"
     owner: "{{ aem_user }}"
     mode: 0660
   tags:
@@ -81,7 +81,7 @@
     - configuration
     - aem-configuration
 
-- name: Enable AEM service
+- name: Enable end start AEM service
   service:
     name: aem
     state: started
