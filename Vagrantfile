@@ -12,6 +12,7 @@ Vagrant.configure("2") do |config|
     config.vm.define "author" do |author|
         author.vm.box = "centos/7"
         author.vm.network "forwarded_port", guest: 4502, host: 4502, host_ip: "127.0.0.1"
+        author.vm.network "private_network", type: "dhcp"
 
         author.vm.provider "virtualbox" do |vb|
             vb.name = "author"
@@ -27,6 +28,7 @@ Vagrant.configure("2") do |config|
     config.vm.define "publish" do |publish|
         publish.vm.box = "centos/7"
         publish.vm.network "forwarded_port", guest: 4503, host: 4503, host_ip: "127.0.0.1"
+        publish.vm.network "private_network", type: "dhcp"
 
         publish.vm.provider "virtualbox" do |vb|
             vb.name = "publish"
