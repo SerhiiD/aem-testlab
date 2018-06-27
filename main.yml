@@ -1,6 +1,8 @@
 ---
 - name: AEM role
-  hosts: all
+  hosts:
+    - author_group
+    - publish_group
   become: true
   vars_files:
     - aem_sensitive_information.yml

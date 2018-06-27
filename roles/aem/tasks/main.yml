@@ -104,3 +104,23 @@
     - aem
     - installation
     - aem-installation
+
+# curl -u admin:admin 'http://localhost:4502/bin/wcmcommand' \
+# -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' \
+# --data 'cmd=createPage&_charset_=utf-8&parentPath=/etc/replication/agents.author&title=ReplicationAgentTest&label=&template=/libs/cq/replication/templates/agent'
+- name: Create Replication Agent
+  uri:
+    url: "http://127.0.0.1:{{ aem_port }}/bin/wcmcommand"
+    user: admin
+    password: admin
+    method: POST
+    body: cmd=createPage&_charset_=utf-8&parentPath=/etc/replication/agents.author&title=ReplicationAgentTest&label=&template=/libs/cq/replication/templates/agent
+    status_code: 200
+    headers:
+      Content-Type: "application/x-www-form-urlencoded; charset=UTF-8"
+  register: createReplicationAgentOutput
+  # when: "'author_group' in group_names"
+  when: aem_runmode == "author"
+
+- debug:
+    msg: "{{ createReplicationAgentOutput }}"

@@ -6,7 +6,6 @@ ENV["LC_ALL"] = "en_US.UTF-8"
 ansible_groups = {}
 ansible_host_vars = {}
 
-
 Vagrant.configure("2") do |config|
 
     config.vm.define "author" do |author|
@@ -21,8 +20,9 @@ Vagrant.configure("2") do |config|
         end
         author.vm.hostname = "author"
 
-        ansible_host_vars["author"] = {"aem_runmode" => "author",
-                                        "aem_port" => "4502"}
+        # ansible_host_vars["author"] = {"aem_runmode" => "author",
+        #                                 "aem_port" => "4502"}
+        ansible_groups["author_group"] = ["author"]    
     end
 
     config.vm.define "publish" do |publish|
@@ -37,8 +37,9 @@ Vagrant.configure("2") do |config|
         end
         publish.vm.hostname = "publish"
 
-        ansible_host_vars["publish"] = {"aem_runmode" => "publish",
-                                        "aem_port" => "4503"}
+        # ansible_host_vars["publish"] = {"aem_runmode" => "publish",
+        #                                 "aem_port" => "4503"}
+        ansible_groups["publish_group"] = ["publish"]    
     end
 
     config.vm.define "workaround" do |workaround|
