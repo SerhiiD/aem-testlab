@@ -4,8 +4,8 @@
     - author_group
     - publish_group
   become: true
-  vars_files:
-    - aem_sensitive_information.yml
   roles:
     - common
     - aem
+  vars_files:
+    - aem_sensitive_information.yml
