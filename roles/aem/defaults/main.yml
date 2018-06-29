@@ -6,6 +6,10 @@ aem_service_user: aem
 aem_admin_user: admin
 aem_admin_password: admin
 
+aem_transport_user: admin
+aem_transport_password: admin
+aem_transport_network_interface_name: eth0
+
 aem_license_product_name: ""
 aem_license_customer_name: ""
 aem_license_product_version: ""

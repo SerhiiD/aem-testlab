@@ -99,44 +99,28 @@
   until: result.status == 200
   retries: 600
   delay: 1
-  when: aem_runmode == "author"
+  # when: aem_runmode == "author"
   tags:
     - aem
     - installation
     - aem-installation
 
-# curl -u admin:admin 'http://localhost:4502/bin/wcmcommand' \
-# -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' \
-# --data 'cmd=createPage&_charset_=utf-8&parentPath=/etc/replication/agents.author&title=ReplicationAgentTest&label=&template=/libs/cq/replication/templates/agent'
-#
-#     enabled=true
-#     transportUri=http://172.28.128.6:4503/bin/receive?sling:authRequestLogin=1
-#     transportUser=admin
-#     transportPassword=admin
-#     cq:lastReplicationAction=Activate
-#     cq:template=/libs/cq/replication/templates/agent
-#     jcr:title=curl created agent
-#     jcr:description=Dynamically created agent
-#     logLevel=info
-#     retryDelay=60000
-#     serializationType=durbo
-
-- name: GET replication agents information
+- name: Get information about replication agents on author
   uri:
     url: "http://127.0.0.1:{{ aem_port }}/etc/replication/agents.author/{{ item }}/jcr:content.json"
     user: "{{ aem_admin_user }}"
     password: "{{ aem_admin_password }}"
     method: GET
     status_code: 200, 404
-  register: GETReplicationAgentsOutput
   with_items: "{{ groups['publish_group'] }}"
   when: aem_runmode == "author"
+  register: aem_replication_agents_author
   tags:
     - aem
     - configuration
     - aem-configuration
      
-- name: Create replication agents if not exist
+- name: Create replication agents configuration on author if it not exist
   uri:
     url: "http://127.0.0.1:{{ aem_port }}/bin/wcmcommand"
     user: "{{ aem_admin_user }}"
@@ -146,50 +130,55 @@
     status_code: 200
     headers:
       Content-Type: "application/x-www-form-urlencoded; charset=UTF-8"
-  register: createReplicationAgentsOutput
-  with_items: "{{ GETReplicationAgentsOutput.results }}"
+  with_items: "{{ aem_replication_agents_author.results }}"
   when: (aem_runmode == "author") and
         (item.status == 404)
+  no_log: yes
   tags:
     - aem
     - configuration
     - aem-configuration
 
-# - name: Configure Replication Agents
-#   uri:
-#     url: "http://127.0.0.1:{{ aem_port }}/etc/replication/agents.author/replicationagenttesttitle/jcr:content"
-#     user: "{{ aem_admin_user }}"
-#     password: "{{ aem_admin_password }}"
-#     method: POST
-#     body: "&transportUser=admin&transportPassword=admin&transportUri=http://172.28.128.10:4503/bin/receive?sling:authRequestLogin=1&enabled=true"
-#     status_code: 200
-#     headers:
-#       Content-Type: "application/x-www-form-urlencoded; charset=UTF-8"
-#   register: configureReplicationAgentsOutput
-#   when: aem_runmode == "author"
-#   tags:
-#     - aem
-#     - configuration
-#     - aem-configuration
+- name: Configure replication agents on author
+  uri:
+    url: "http://127.0.0.1:{{ aem_port }}/etc/replication/agents.author/{{ item.item }}/jcr:content"
+    user: "{{ aem_admin_user }}"
+    password: "{{ aem_admin_password }}"
+    method: POST
+    body: "transportUser={{ aem_transport_user }}&transportPassword={{ aem_transport_password }}&transportUri=http://{{ hostvars[item.item]['ansible_'+aem_transport_network_interface_name]['ipv4']['address'] }}:{{ hostvars[item.item]['aem_port'] }}/bin/receive?sling:authRequestLogin=1&enabled=true"
+    status_code: 200
+    headers:
+      Content-Type: "application/x-www-form-urlencoded; charset=UTF-8"
+  with_items: "{{ aem_replication_agents_author.results }}"
+  when: aem_runmode == "author"
+  no_log: yes
+  tags:
+    - aem
+    - configuration
+    - aem-configuration
 
-# - name: GET Replication Agents information again - just for debug purposes
+# - name: DEBUG. Get information about replication agents on author
 #   uri:
-#     url: http://127.0.0.1:4502/etc/replication/agents.author/replicationagenttesttitle/jcr:content.json
+#     url: "http://127.0.0.1:{{ aem_port }}/etc/replication/agents.author/{{ item }}/jcr:content.json"
 #     user: "{{ aem_admin_user }}"
 #     password: "{{ aem_admin_password }}"
 #     method: GET
-#   register: GETReplicationAgentsOutput
+#     status_code: 200, 404
+#   with_items: "{{ groups['publish_group'] }}"
 #   when: aem_runmode == "author"
+#   register: aem_replication_agents_author
 #   tags:
 #     - aem
 #     - configuration
 #     - aem-configuration
 
-# - debug:
+# - name: DEBUG.
+#   debug:
 #     msg: "{{ item.item }} {{ item.status }}"
 #   when: aem_runmode == "author"
-#   with_items: "{{ GETReplicationAgentsOutput.results }}"
+#   with_items: "{{ aem_replication_agents_author.results }}"
 
-# - debug:
+# - name: DEBUG.
+#   debug:
 #     msg: "{{ item }}"
 #   with_items: "{{groups['publish_group']}}"
