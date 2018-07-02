@@ -1,7 +1,9 @@
 [Service]
 Environment="CQ_PORT={{ aem_port }}"
 Environment="CQ_RUNMODE={{ aem_runmode }}"
-Environment="CQ_JVM_OPTS=-server -Xmx1024m -XX:MaxPermSize=256M -Djava.awt.headless=true"
+Environment="CQ_JVM_OPTS=-server -Xmx1024m -Djava.awt.headless=true"
+
+{# Environment="CQ_JVM_OPTS=-server -Xmx1024m -XX:MaxPermSize=256M -Djava.awt.headless=true" #}
 
 {# Environment="CQ_HOST="
 Environment="CQ_JARFILE=''"

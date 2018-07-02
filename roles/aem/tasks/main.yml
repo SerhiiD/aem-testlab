@@ -5,11 +5,11 @@
     path: "{{ aem_root_directory }}"
     state: directory
     owner: "{{ aem_service_user }}"
-    mode: 0774
+    mode: 0775
   tags:
     - aem
-    - installation
-    - aem-installation
+    - install
+    - aem-install
 
 - name: Copy the AEM jar file to the remote host
   copy:
@@ -19,8 +19,8 @@
     mode: 0660
   tags:
     - aem
-    - installation
-    - aem-installation
+    - install
+    - aem-install
 
 - name: Create license.properties file on the remote host
   template:
@@ -30,17 +30,19 @@
     mode: 0660
   tags:
     - aem
-    - installation
-    - aem-installation
+    - install
+    - aem-install
 
 - name: Unpack the AEM jar file
   command: "java -jar {{ aem_root_directory }}/{{ aem_jar_file_full_path | basename }} -b {{ aem_root_directory }} -unpack -nofork"
   args:
     creates: "{{ aem_root_directory }}/crx-quickstart/readme.txt"
+  become: yes
+  become_user: "{{ aem_service_user }}"
   tags:
     - aem
-    - installation
-    - aem-installation
+    - install
+    - aem-install
 
 - name: Create the AEM service file
   template:
@@ -49,23 +51,22 @@
     owner: root
     mode: 0664
   notify:
-    - reread systemd configs
     - restart aem
   tags:
     - aem
-    - installation
-    - aem-installation
+    - install
+    - aem-install
 
 - name: Create /etc/systemd/system/aem.service.d/ directory
   file:
     path: /etc/systemd/system/aem.service.d/
     state: directory
     owner: root
-    mode: 0664
+    mode: 0775
   tags:
     - aem
-    - installation
-    - aem-installation
+    - install
+    - aem-install
 
 - name: Create the AEM service configuration file
   template:
@@ -74,22 +75,22 @@
     owner: root
     mode: 0664
   notify:
-    - reread systemd configs
     - restart aem
   tags:
     - aem
-    - installation
-    - aem-installation
+    - install
+    - aem-install
 
-- name: Enable end start AEM service
-  service:
+- name: Enable and start AEM service
+  systemd:
     name: aem
     state: started
     enabled: yes
+    daemon_reload: yes
   tags:
     - aem
-    - installation
-    - aem-installation
+    - install
+    - aem-install
 
 - name: Wait for AEM to come up
   uri:
@@ -97,13 +98,13 @@
     status_code: 200
   register: result
   until: result.status == 200
-  retries: 600
-  delay: 1
+  retries: 15
+  delay: 60
   # when: aem_runmode == "author"
   tags:
     - aem
-    - installation
-    - aem-installation
+    - install
+    - aem-install
 
 - name: Get information about replication agents on author
   uri:
@@ -117,8 +118,8 @@
   register: aem_replication_agents_author
   tags:
     - aem
-    - configuration
-    - aem-configuration
+    - configure
+    - aem-configure
      
 - name: Create replication agents configuration on author if it not exist
   uri:
@@ -136,8 +137,8 @@
   no_log: yes
   tags:
     - aem
-    - configuration
-    - aem-configuration
+    - configure
+    - aem-configure
 
 - name: Configure replication agents on author
   uri:
@@ -154,31 +155,5 @@
   no_log: yes
   tags:
     - aem
-    - configuration
-    - aem-configuration
-
-# - name: DEBUG. Get information about replication agents on author
-#   uri:
-#     url: "http://127.0.0.1:{{ aem_port }}/etc/replication/agents.author/{{ item }}/jcr:content.json"
-#     user: "{{ aem_admin_user }}"
-#     password: "{{ aem_admin_password }}"
-#     method: GET
-#     status_code: 200, 404
-#   with_items: "{{ groups['publish_group'] }}"
-#   when: aem_runmode == "author"
-#   register: aem_replication_agents_author
-#   tags:
-#     - aem
-#     - configuration
-#     - aem-configuration
-
-# - name: DEBUG.
-#   debug:
-#     msg: "{{ item.item }} {{ item.status }}"
-#   when: aem_runmode == "author"
-#   with_items: "{{ aem_replication_agents_author.results }}"
-
-# - name: DEBUG.
-#   debug:
-#     msg: "{{ item }}"
-#   with_items: "{{groups['publish_group']}}"
+    - configure
+    - aem-configure

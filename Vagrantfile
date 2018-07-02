@@ -3,7 +3,7 @@
 
 ENV["LC_ALL"] = "en_US.UTF-8"
 
-numberOfPublish = 2
+numberOfPublish = 1
 hostPublishPort = 4503
 
 ansible_groups = {}
@@ -61,7 +61,7 @@ Vagrant.configure("2") do |config|
             ansible.playbook = "main.yml"
             ansible.host_key_checking = false
             # ansible.verbose = "-vvv"
-            # ansible.tags = "common, aem"
+            ansible.tags = "common, install"
         end
     end
 

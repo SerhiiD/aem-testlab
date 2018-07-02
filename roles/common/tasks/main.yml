@@ -31,8 +31,8 @@
     state: permissive
   tags:
     - common
-    - configuration
-    - common-configuration
+    - configure
+    - common-configure
 
 - name: Set environment variables
   template:
