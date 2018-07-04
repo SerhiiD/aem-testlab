@@ -50,8 +50,8 @@
     dest: /etc/systemd/system/aem.service
     owner: root
     mode: 0664
-  # notify:
-  #   - restart aem
+  notify:
+    - restart aem
   tags:
     - aem
     - install
@@ -74,8 +74,8 @@
     dest: /etc/systemd/system/aem.service.d/aem.conf
     owner: root
     mode: 0664
-  # notify:
-  #   - restart aem
+  notify:
+    - restart aem
   tags:
     - aem
     - install
@@ -163,3 +163,19 @@
     name: aem.service
     state: restarted
     daemon_reload: yes
+  tag:
+    - debug
+    - aem-debug
+
+- name: DEBUG. Wait for AEM to come up
+  uri:
+    url: "http://127.0.0.1:{{ aem_port }}/libs/granite/core/content/login.html"
+    status_code: 200
+  register: result
+  until: result.status == 200
+  retries: 120
+  delay: 5
+  # when: aem_runmode == "author"
+  tag:
+    - debug
+    - aem-debug

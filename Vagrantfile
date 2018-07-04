@@ -21,7 +21,7 @@ Vagrant.configure("2") do |config|
 
         author.vm.provider "virtualbox" do |vb|
             vb.name = "author"
-            vb.memory = 2048
+            vb.memory = 1024
             vb.cpus = 2
         end
         author.vm.hostname = "author"
@@ -39,7 +39,7 @@ Vagrant.configure("2") do |config|
 
             publish.vm.provider "virtualbox" do |vb|
                 vb.name = "publish-#{id}"
-                vb.memory = 2048
+                vb.memory = 1024
                 vb.cpus = 2
             end
             publish.vm.hostname = "publish"
@@ -53,6 +53,8 @@ Vagrant.configure("2") do |config|
         workaround.vm.box = "hashicorp/precise64"
         workaround.vm.provider "virtualbox" do |virtualbox|
             virtualbox.name = "workaround"
+            vb.memory = 256
+            vb.cpus = 1
         end
         workaround.vm.provision "ansible" do |ansible|
             ansible.limit = "all:!workaround"
