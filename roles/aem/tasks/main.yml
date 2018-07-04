@@ -50,8 +50,8 @@
     dest: /etc/systemd/system/aem.service
     owner: root
     mode: 0664
-  notify:
-    - restart aem
+  # notify:
+  #   - restart aem
   tags:
     - aem
     - install
@@ -74,8 +74,8 @@
     dest: /etc/systemd/system/aem.service.d/aem.conf
     owner: root
     mode: 0664
-  notify:
-    - restart aem
+  # notify:
+  #   - restart aem
   tags:
     - aem
     - install
@@ -157,3 +157,9 @@
     - aem
     - configure
     - aem-configure
+
+- name: DEBUG. restart aem
+  systemd:
+    name: aem.service
+    state: restarted
+    daemon_reload: yes
