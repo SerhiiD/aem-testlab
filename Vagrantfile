@@ -63,7 +63,7 @@ Vagrant.configure("2") do |config|
             ansible.playbook = "main.yml"
             ansible.host_key_checking = false
             # ansible.verbose = "-vvv"
-            # ansible.tags = "common, install"
+            # ansible.tags = "common-users"
         end
     end
 

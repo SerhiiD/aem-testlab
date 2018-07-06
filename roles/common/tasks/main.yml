@@ -50,3 +50,13 @@
     - common
     - time
     - common-time
+
+- name: Create system users
+  user:
+    name: "{{ item.name }}"
+    system: true
+  with_items: "{{ common_system_users }}"
+  tags:
+    - common
+    - users
+    - common-users

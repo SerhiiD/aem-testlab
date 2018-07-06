@@ -6,3 +6,5 @@ common_packages:
 common_environment_variables: {}
 
 common_timezone: "Europe/Kiev"
+
+common_system_users: {}
