@@ -51,8 +51,8 @@ Vagrant.configure("2") do |config|
 
     config.vm.define "workaround" do |workaround|
         workaround.vm.box = "hashicorp/precise64"
-        workaround.vm.provider "virtualbox" do |virtualbox|
-            virtualbox.name = "workaround"
+        workaround.vm.provider "virtualbox" do |vb|
+            vb.name = "workaround"
             vb.memory = 256
             vb.cpus = 1
         end
