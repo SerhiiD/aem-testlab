@@ -7,6 +7,11 @@ common_packages:
   - mlocate
   - java-1.8.0-openjdk
 
+common_system_users:
+  - name: "{{ aem_service_user }}"
+
+common_timezone: "Europe/Kiev"
+
 aem_root_directory: /opt/aem6
 aem_service_user: aem
 
@@ -18,5 +23,3 @@ aem_transport_password: admin
 
 aem_transport_network_interface_name: eth1
 
-common_system_users:
-  - name: "{{ aem_service_user }}"

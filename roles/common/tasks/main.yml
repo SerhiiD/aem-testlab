@@ -43,7 +43,7 @@
     - environment
     - common-environment
 
-- name: Set timezone to Europe/Kiev
+- name: Set timezone
   timezone:
     name: "{{ common_timezone }}"
   tags:
