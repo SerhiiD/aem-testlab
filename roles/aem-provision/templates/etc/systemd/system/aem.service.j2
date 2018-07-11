@@ -10,8 +10,8 @@ ExecStop={{ aem_root_directory }}/crx-quickstart/bin/stop
 User={{ aem_service_user }}
 SyslogIdentifier=aem
 PIDFile={{ aem_root_directory }}/crx-quickstart/conf/cq.pid
-Restart=on-failure
-RestartSec=5s
+{# Restart=on-failure
+RestartSec=5s #}
  
 [Install]
 WantedBy=multi-user.target
