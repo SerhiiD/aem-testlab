@@ -1,0 +1,181 @@
+---
+# tasks file for aem-provision
+- name: Create AEM root diretory
+  file:
+    path: "{{ aem_root_directory }}"
+    state: directory
+    owner: "{{ aem_service_user }}"
+    mode: 0775
+  tags:
+    - aem
+    - install
+    - aem-install
+
+- name: Copy the AEM jar file to the remote host
+  copy:
+    src: "{{ aem_jar_file_full_path }}"
+    dest: "{{ aem_root_directory }}/{{ aem_jar_file_full_path | basename }}"
+    owner: "{{ aem_service_user }}"
+    mode: 0660
+  tags:
+    - aem
+    - install
+    - aem-install
+
+- name: Create license.properties file on the remote host
+  template:
+    src: license.properties.j2
+    dest: "{{ aem_root_directory }}/license.properties"
+    owner: "{{ aem_service_user }}"
+    mode: 0660
+  tags:
+    - aem
+    - install
+    - aem-install
+
+- name: Unpack the AEM jar file
+  command: "java -jar {{ aem_root_directory }}/{{ aem_jar_file_full_path | basename }} -b {{ aem_root_directory }} -unpack -nofork"
+  args:
+    creates: "{{ aem_root_directory }}/crx-quickstart/readme.txt"
+  become: yes
+  become_user: "{{ aem_service_user }}"
+  tags:
+    - aem
+    - install
+    - aem-install
+
+- name: Create the AEM service file
+  template:
+    src: etc/systemd/system/aem.service.j2
+    dest: /etc/systemd/system/aem.service
+    owner: root
+    mode: 0664
+  notify:
+    - restart aem
+  tags:
+    - aem
+    - install
+    - aem-install
+
+- name: Create /etc/systemd/system/aem.service.d/ directory
+  file:
+    path: /etc/systemd/system/aem.service.d/
+    state: directory
+    owner: root
+    mode: 0775
+  tags:
+    - aem
+    - install
+    - aem-install
+
+- name: Create the AEM service configuration file
+  template:
+    src: etc/systemd/system/aem.service.d/aem.conf.j2
+    dest: /etc/systemd/system/aem.service.d/aem.conf
+    owner: root
+    mode: 0664
+  notify:
+    - restart aem
+  tags:
+    - aem
+    - install
+    - aem-install
+
+- name: Enable and start AEM service
+  systemd:
+    name: aem
+    state: started
+    enabled: yes
+    daemon_reload: yes
+  tags:
+    - aem
+    - install
+    - aem-install
+
+- name: Wait for AEM to come up
+  uri:
+    url: "http://127.0.0.1:{{ aem_port }}/libs/granite/core/content/login.html"
+    status_code: 200
+  register: result
+  until: result.status == 200
+  retries: 15
+  delay: 60
+  # when: aem_runmode == "author"
+  tags:
+    - aem
+    - install
+    - aem-install
+
+- name: Get information about replication agents on author
+  uri:
+    url: "http://127.0.0.1:{{ aem_port }}/etc/replication/agents.author/{{ item }}/jcr:content.json"
+    user: "{{ aem_admin_user }}"
+    password: "{{ aem_admin_password }}"
+    method: GET
+    status_code: 200, 404
+  with_items: "{{ groups['publish_group'] }}"
+  when: aem_runmode == "author"
+  register: aem_replication_agents_author
+  tags:
+    - aem
+    - configure
+    - aem-configure
+     
+- name: Create replication agents configuration on author if it not exist
+  uri:
+    url: "http://127.0.0.1:{{ aem_port }}/bin/wcmcommand"
+    user: "{{ aem_admin_user }}"
+    password: "{{ aem_admin_password }}"
+    method: POST
+    body: "cmd=createPage&_charset_=utf-8&parentPath=/etc/replication/agents.author&title={{ item.item }}&label={{ item.item }}&template=/libs/cq/replication/templates/agent"
+    status_code: 200
+    headers:
+      Content-Type: "application/x-www-form-urlencoded; charset=UTF-8"
+  with_items: "{{ aem_replication_agents_author.results }}"
+  when: (aem_runmode == "author") and
+        (item.status == 404)
+  no_log: yes
+  tags:
+    - aem
+    - configure
+    - aem-configure
+
+- name: Configure replication agents on author
+  uri:
+    url: "http://127.0.0.1:{{ aem_port }}/etc/replication/agents.author/{{ item.item }}/jcr:content"
+    user: "{{ aem_admin_user }}"
+    password: "{{ aem_admin_password }}"
+    method: POST
+    body: "transportUser={{ aem_transport_user }}&transportPassword={{ aem_transport_password }}&transportUri=http://{{ hostvars[item.item]['ansible_'+aem_transport_network_interface_name]['ipv4']['address'] }}:{{ hostvars[item.item]['aem_port'] }}/bin/receive?sling:authRequestLogin=1&enabled=true"
+    status_code: 200
+    headers:
+      Content-Type: "application/x-www-form-urlencoded; charset=UTF-8"
+  with_items: "{{ aem_replication_agents_author.results }}"
+  when: aem_runmode == "author"
+  no_log: yes
+  tags:
+    - aem
+    - configure
+    - aem-configure
+
+# - name: DEBUG. restart aem
+#   systemd:
+#     name: aem.service
+#     state: restarted
+#     daemon_reload: yes
+#   tags:
+#     - debug
+#     - aem-debug
+
+# - name: DEBUG. Wait for AEM to come up
+#   uri:
+#     url: "http://127.0.0.1:{{ aem_port }}/libs/granite/core/content/login.html"
+#     status_code: 200
+#   register: result
+#   until: result.status == 200
+#   retries: 120
+#   delay: 5
+#   # when: aem_runmode == "author"
+#   tags:
+#     - debug
+#     - aem-debug

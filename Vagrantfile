@@ -26,8 +26,6 @@ Vagrant.configure("2") do |config|
         end
         author.vm.hostname = "author"
 
-        # ansible_host_vars["author"] = {"aem_runmode" => "author",
-        #                                 "aem_port" => "4502"}
         ansible_groups["author_group"] = ["author"]    
     end
 
@@ -44,8 +42,6 @@ Vagrant.configure("2") do |config|
             end
             publish.vm.hostname = "publish"
 
-            # ansible_host_vars["publish"] = {"aem_runmode" => "publish",
-            #                                 "aem_port" => "4503"}
         end
     end
 

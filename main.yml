@@ -1,11 +1,11 @@
 ---
-- name: AEM role
+- name: aem-provision role
   hosts:
     - author_group
     - publish_group
   become: true
   roles:
     - common
-    - aem
+    - aem-provision
   vars_files:
     - aem_sensitive_information.yml

@@ -1,0 +1,17 @@
+[Unit]
+Description={{ aem_license_product_name }} {{ aem_license_product_version }}
+Requires=network.target
+After=network.target
+ 
+[Service]
+Type=forking
+ExecStart={{ aem_root_directory }}/crx-quickstart/bin/start
+ExecStop={{ aem_root_directory }}/crx-quickstart/bin/stop
+User={{ aem_service_user }}
+SyslogIdentifier=aem
+PIDFile={{ aem_root_directory }}/crx-quickstart/conf/cq.pid
+Restart=on-failure
+RestartSec=5s
+ 
+[Install]
+WantedBy=multi-user.target
